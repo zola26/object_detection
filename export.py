@@ -405,7 +405,8 @@ def export_saved_model(
     try:
         import tensorflow as tf
     except Exception:
-        check_requirements(f"tensorflow{'' if torch.cuda.is_available() else '-macos' if MACOS else '-cpu'}")
+        check_requirements(f"tensorflow{'' if torch.cuda.is_available() else '-macos' if MACOS else '-cpu'}<=2.15.1")
+
         import tensorflow as tf
     from tensorflow.python.framework.convert_to_constants import convert_variables_to_constants_v2
 
@@ -742,9 +743,9 @@ def pipeline_coreml(model, im, file, names, y, prefix=colorstr("CoreML Pipeline:
     model = ct.models.MLModel(pipeline.spec)
     model.input_description["image"] = "Input image"
     model.input_description["iouThreshold"] = f"(optional) IOU Threshold override (default: {nms.iouThreshold})"
-    model.input_description[
-        "confidenceThreshold"
-    ] = f"(optional) Confidence Threshold override (default: {nms.confidenceThreshold})"
+    model.input_description["confidenceThreshold"] = (
+        f"(optional) Confidence Threshold override (default: {nms.confidenceThreshold})"
+    )
     model.output_description["confidence"] = 'Boxes × Class confidence (see user-defined metadata "classes")'
     model.output_description["coordinates"] = "Boxes × [x, y, width, height] (relative to image size)"
     model.save(f)  # pipelined
